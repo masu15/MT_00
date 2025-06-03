@@ -1,7 +1,5 @@
 #include <Novice.h>
-#include"math.h"
-#include <Matrix4x4.h>
-#include <Vector3.h>
+#include"assert.h"
 const char kWindowTitle[] = "GC2D_06_マスヤマ_リョウタ_タイトル";
 const int kWindowWidte = 1280;
 const int kWindowHaight = 720;
@@ -9,21 +7,77 @@ struct Matrix4x4
 {
 	float m[4][4];
 };
-Matrix4x4 MakeTranslateMatrix(const Vector3& translate) 
+struct Vector3
 {
-
+	float x, y, z;
+};
+Matrix4x4 MakeTranslateMatrix(const Vector3& translate)
+{
+	Matrix4x4 result{};
+	result.m[0][0] = 1;
+	result.m[0][1] = 0;
+	result.m[0][2] = 0;
+	result.m[0][3] = 0;
+	result.m[1][0] = 0;
+	result.m[1][1] = 1;
+	result.m[1][2] = 0;
+	result.m[1][3] = 0;
+	result.m[2][0] = 0;
+	result.m[2][1] = 0;
+	result.m[2][2] = 1;
+	result.m[2][3] = 0;
+	result.m[3][0] = translate.x;
+	result.m[3][1] = translate.y;
+	result.m[3][2] = translate.z;
+	result.m[3][3] = 1;
+	return result;
 }
 Matrix4x4 MakeScaleMatrix(const Vector3& scale)
 {
-
+	Matrix4x4 result{};
+	result.m[0][0] = scale.x;
+	result.m[0][1] = 0;
+	result.m[0][2] = 0;
+	result.m[0][3] = 0;
+	result.m[1][0] = 0;
+	result.m[1][1] = scale.y;
+	result.m[1][2] = 0;
+	result.m[1][3] = 0;
+	result.m[2][0] = 0;
+	result.m[2][1] = 0;
+	result.m[2][2] = scale.z;
+	result.m[2][3] = 0;
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+	return result;
 }
-Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) 
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix)
 {
+	Vector3 result{};
+	result.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
+	result.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
+	result.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
 
+	float w= vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
+	assert(w != 0.0f);
+	result.x /= w;
+	result.y /= w;
+	result.z /= w;
+	return result;
 }
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
-void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix) {
+void VectorScreenPrintf(int x, int y, const Vector3& vector, const char* label) 
+{
+	Novice::ScreenPrintf(x,y,"%.02f",vector.x);
+	Novice::ScreenPrintf(x+kColumnWidth*1,y,"%.02f",vector.y);
+	Novice::ScreenPrintf(x+kColumnWidth*2,y,"%.02f",vector.z);
+	Novice::ScreenPrintf(x+kColumnWidth*3,y,"%s",label);
+}
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix,const char*label) {
+	Novice::ScreenPrintf(x,  20+y, "%s", label);
 	for (int row = 0; row < 4; ++row) {
 		for (int column = 0; column < 4; ++column) {
 			Novice::ScreenPrintf(
@@ -38,8 +92,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Novice::Initialize(kWindowTitle, kWindowWidte, kWindowHaight);
 
 	// キー入力結果を受け取る箱
-	char keys[256] = {0};
-	char preKeys[256] = {0};
+	char keys[256] = { 0 };
+	char preKeys[256] = { 0 };
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -74,8 +128,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
-		MatrixScreenPrintf(0, 0, translateMatrix, "");
-		MatrixScreenPrintf(0, kRowHeight*5, scaleMatrix, "");
+		VectorScreenPrintf(0, 0, transformed, "transformed");
+		MatrixScreenPrintf(0, 50, translateMatrix, "translateMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 5, scaleMatrix, "scaleMatrix");
 		///
 		/// ↑描画処理ここまで
 		///
