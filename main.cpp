@@ -9,21 +9,40 @@ struct Matrix4x4
 {
 	float m[4][4];
 };
-Matrix4x4 MakeTranslateMatrix(const Vector3& translate) 
+Matrix4x4 MakeRotateXMatrix(float radian)
 {
-
+	Matrix4x4 result;
+    
+	return result;
 }
-Matrix4x4 MakeScaleMatrix(const Vector3& scale)
+Matrix4x4 MakeRotateYMatrix(float radian)
 {
+	Matrix4x4 result;
 
+	return result;
 }
-Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) 
+Matrix4x4 MakeRotateZMatrix(float radian)
 {
+	Matrix4x4 result;
 
+	return result;
+}
+Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2)
+{
+	Matrix4x4 result = {};
+	for (int x = 0; x < 4; x++) {
+		for (int y = 0; y < 4; y++) {
+			for (int z = 0; z < 4; z++) {
+				result.m[y][x] = m1.m[x][y] * m2.m[z][x];
+			}
+		}
+	}
+	return result;
 }
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
-void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix) {
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix,const char*label){
+	Novice::ScreenPrintf(x, 20 + y, "%s", label);
 	for (int row = 0; row < 4; ++row) {
 		for (int column = 0; column < 4; ++column) {
 			Novice::ScreenPrintf(
@@ -53,20 +72,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓更新処理ここから
 		///
-		Vector3 translate{ 4.1f,2.6f,0.8f };
-		Vector3 scale{ 1.5f,5.2f,7.3f };
-		Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
-		Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
-		Vector3 point{ 2.3f,3.8f,1.4f };
-		Matrix4x4 transformMatrix = {
-			1.0f,2.0f,3.0f,4.0f,
-			3.0f,1.0f,1.0f,2.0f,
-			1.0f,4.0f,2.0f,3.0f,
-			2.0f,2.0f,1.0f,3.0f
-		};
-		Vector3 transformed = Transform(point, transformMatrix);
-
-
+		Vector3 rotate{ 0.4f,-1.43f,-0.8f };
+		Matrix4x4 rotateXMatrix = MakeRotateXMatrix(rotate.x);
+		Matrix4x4 rotateYMatrix = MakeRotateYMatrix(rotate.y);
+		Matrix4x4 rotateZMatrix = MakeRotateZMatrix(rotate.z);
+		Matrix4x4 rotateXYZMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
 		///
 		/// ↑更新処理ここまで
 		///
@@ -74,8 +84,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
-		MatrixScreenPrintf(0, 0, translateMatrix, "");
-		MatrixScreenPrintf(0, kRowHeight*5, scaleMatrix, "");
+		MatrixScreenPrintf(0, 0, rotateXMatrix, "rotateXMatrix");
+		MatrixScreenPrintf(0, kRowHeight*5, rotateYMatrix, "rotateYMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 5*2, rotateZMatrix, "rotateZMatrix");
 		///
 		/// ↑描画処理ここまで
 		///
