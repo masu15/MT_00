@@ -1,7 +1,5 @@
 #include <Novice.h>
-#include"math.h"
-#include <Matrix4x4.h>
-#include <Vector3.h>
+#include"cmath"
 const char kWindowTitle[] = "GC2D_06_マスヤマ_リョウタ_タイトル";
 const int kWindowWidte = 1280;
 const int kWindowHaight = 720;
@@ -9,34 +7,83 @@ struct Matrix4x4
 {
 	float m[4][4];
 };
-Matrix4x4 MakeRotateXMatrix(float radian)
+struct Vector3
 {
-	Matrix4x4 result;
-    
-	return result;
-}
-Matrix4x4 MakeRotateYMatrix(float radian)
-{
-	Matrix4x4 result;
-
-	return result;
-}
-Matrix4x4 MakeRotateZMatrix(float radian)
-{
-	Matrix4x4 result;
-
-	return result;
-}
+	float x, y, z;
+};
 Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2)
 {
 	Matrix4x4 result = {};
 	for (int x = 0; x < 4; x++) {
 		for (int y = 0; y < 4; y++) {
 			for (int z = 0; z < 4; z++) {
-				result.m[y][x] = m1.m[x][y] * m2.m[z][x];
+				result.m[y][x] = m1.m[y][z] * m2.m[z][x];
 			}
 		}
 	}
+	return result;
+}
+Matrix4x4 MakeRotateXMatrix(float radian)
+{
+	Matrix4x4 result;
+	result.m[0][0] = 1;
+	result.m[0][1] = 0;
+	result.m[0][2] = 0;
+	result.m[0][3] = 0;
+	result.m[1][0] = 0;
+	result.m[1][1] = std::cos(radian);
+	result.m[1][2] = std::sin(radian);
+	result.m[1][3] = 0;
+	result.m[2][0] = 0;
+	result.m[2][1] = std::sin(-radian);
+	result.m[2][2] = std::cos(radian);
+	result.m[2][3] = 0;
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+	return result;
+}
+Matrix4x4 MakeRotateYMatrix(float radian)
+{
+	Matrix4x4 result;
+	result.m[0][0] = std::cos(radian);
+	result.m[0][1] = 0;
+	result.m[0][2] = std::sin(radian);
+	result.m[0][3] = 0;
+	result.m[1][0] = 0;
+	result.m[1][1] = 1;
+	result.m[1][2] = 0;
+	result.m[1][3] = 0;
+	result.m[2][0] = std::sin(-radian);
+	result.m[2][1] = 0;
+	result.m[2][2] = std::cos(radian);
+	result.m[2][3] = 0;
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
+	return result;
+}
+Matrix4x4 MakeRotateZMatrix(float radian)
+{
+	Matrix4x4 result;
+	result.m[0][0] = std::cos(radian);
+	result.m[0][1] = std::sin(radian);
+	result.m[0][2] = 0;
+	result.m[0][3] = 0;
+	result.m[1][0] = std::sin(-radian);
+	result.m[1][1] = std::cos(radian);
+	result.m[1][2] = 0;
+	result.m[1][3] = 0;
+	result.m[2][0] = 0;
+	result.m[2][1] = 0;
+	result.m[2][2] = 1;
+	result.m[2][3] = 0;
+	result.m[3][0] = 0;
+	result.m[3][1] = 0;
+	result.m[3][2] = 0;
+	result.m[3][3] = 1;
 	return result;
 }
 static const int kRowHeight = 20;
@@ -85,9 +132,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ↓描画処理ここから
 		///
 		MatrixScreenPrintf(0, 0, rotateXMatrix, "rotateXMatrix");
-		MatrixScreenPrintf(0, kRowHeight*5, rotateYMatrix, "rotateYMatrix");
-		MatrixScreenPrintf(0, kRowHeight * 5*2, rotateZMatrix, "rotateZMatrix");
-		///
+		MatrixScreenPrintf(0, kRowHeight * 5, rotateYMatrix, "rotateYMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 5 * 2, rotateZMatrix, "rotateZMatrix");
+		MatrixScreenPrintf(0, kRowHeight * 5 * 3, rotateXYZMatrix, "rotateXYZMatrix");
+		///*/
 		/// ↑描画処理ここまで
 		///
 
