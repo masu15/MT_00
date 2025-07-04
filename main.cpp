@@ -16,9 +16,7 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2)
 	Matrix4x4 result = {};
 	for (int x = 0; x < 4; x++) {
 		for (int y = 0; y < 4; y++) {
-			for (int z = 0; z < 4; z++) {
-				result.m[y][x] = m1.m[y][z] * m2.m[z][x];
-			}
+			result.m[x][y] = m1.m[x][0] * m2.m[0][y] + m1.m[x][1] * m2.m[1][y] + m1.m[x][2] * m2.m[2][y] + m1.m[x][3] * m2.m[3][y];
 		}
 	}
 	return result;
@@ -89,11 +87,11 @@ Matrix4x4 MakeRotateZMatrix(float radian)
 static const int kRowHeight = 20;
 static const int kColumnWidth = 60;
 void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix,const char*label){
-	Novice::ScreenPrintf(x, 20 + y, "%s", label);
+	Novice::ScreenPrintf(x, y, "%s", label);
 	for (int row = 0; row < 4; ++row) {
 		for (int column = 0; column < 4; ++column) {
 			Novice::ScreenPrintf(
-				x + column * kColumnWidth, y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
+				x + column * kColumnWidth, 20+y + row * kRowHeight, "%6.02f", matrix.m[row][column]);
 		}
 	}
 }
